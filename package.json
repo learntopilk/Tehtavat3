@@ -1,0 +1,20 @@
+{
+  "name": "teht3_puhelinluettelo_backend",
+  "version": "1.0.0",
+  "description": "The Puhelinluettelo backend.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/learntopilk/Tehtavat3.git"
+  },
+  "author": "joonas viljakainen",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/learntopilk/Tehtavat3/issues"
+  },
+  "homepage": "https://github.com/learntopilk/Tehtavat3#readme"
+}
