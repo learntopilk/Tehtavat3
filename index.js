@@ -59,6 +59,29 @@ app.get("/api/persons/:id", (req, res) => {
     }
 })
 
+app.delete("/api/persons/:id", (req, res) => {
+    let found = false;
+    let newList = []
+     persons['persons'].map(person => {
+       if (person.id !== Number(req.params.id)) {
+        newList.push(person) 
+        return true
+       } else {
+         found = true
+         return false
+       }
+    })
+
+    console.log("found: ", found)
+    console.log("Persons: ", newList)
+
+    if (found) {
+      res.status(200).end()
+    } else {
+      res.status(404).end()
+    }
+})
+
 app.get("/", (req, res) => {
     console.log("Request received")
     res.send(JSON.stringify(persons))
