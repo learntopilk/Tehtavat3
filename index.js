@@ -4,8 +4,12 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 
 const app = express()
+
+morgan.token('body', (req) => {return JSON.stringify(req.body)})
+app.use(morgan(':method :url :body :status :res[content-length] - :response-time: ms'))
+
 app.use(bodyParser.json())
-app.use(morgan('tiny'))
+
 
 const parametersOK = (person) => {
   if (!person.name || !person.number) {
@@ -88,19 +92,19 @@ app.get("/api/persons/:id", (req, res) => {
 
 app.post("/api/persons/", (req, res) => {
   
-  console.log("req.body: ", req.body)
+  //console.log("req.body: ", req.body)
 
   if (parametersOK(req.body)) {
     //console.log("Params OK")
     if (!personInList(req.body)) {
-      console.log("Person not in list")
+      //console.log("Person not in list")
       let person = {
         name: req.body.name,
         number: req.body.number,
         id: Math.floor(Math.random() * 10000)
       }
       persons['persons'].push(person)
-      console.log("Persons after update: ", persons['persons'])
+     // console.log("Persons after update: ", persons['persons'])
 
       res.json(req.body).end()
     } else {
