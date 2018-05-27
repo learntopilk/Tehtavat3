@@ -38,14 +38,19 @@ let persons = {
     ]
   }
 
-app.get("/", (req, res) => {
-    console.log("Request received")
-    res.send(JSON.stringify(persons))
+app.get("/info", (req, res) => {
+    //res.writeHead(200, {'Content-type': 'text/html'})
+    res.send(`<div>Palvelimella on ${persons['persons'].length} yhteystietoa.</div><div>${new Date()}</div>`)
 })
 
 app.get("/api/persons", (req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' })
     res.end(JSON.stringify(persons))
+})
+
+app.get("/", (req, res) => {
+    console.log("Request received")
+    res.send(JSON.stringify(persons))
 })
 
 app.listen(3002)
