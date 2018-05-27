@@ -2,9 +2,11 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
+const cors = require('cors')
 
 const app = express()
 
+app.use(cors())
 morgan.token('body', (req) => {return JSON.stringify(req.body)})
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time: ms'))
 
@@ -75,8 +77,8 @@ app.get("/info", (req, res) => {
 })
 
 app.get("/api/persons", (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'true' })
-  res.end(JSON.stringify(persons))
+  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify(persons['persons']))
 })
 
 app.get("/api/persons/:id", (req, res) => {
@@ -106,7 +108,7 @@ app.post("/api/persons/", (req, res) => {
       persons['persons'].push(person)
      // console.log("Persons after update: ", persons['persons'])
 
-      res.json(req.body).end()
+      res.json(person).end()
     } else {
       res.status(400).json({'error': 'Person already in list!'})
     }
@@ -120,20 +122,19 @@ app.post("/api/persons/", (req, res) => {
 app.delete("/api/persons/:id", (req, res) => {
   let found = false;
   let newList = []
+
   persons['persons'].map(person => {
     if (person.id !== Number(req.params.id)) {
       newList.push(person)
-      return true
     } else {
       found = true
       return false
     }
   })
 
-  //console.log("found: ", found)
-  //console.log("Persons: ", newList)
-
   if (found) {
+    persons['persons'] = newList;
+    console.log("Persons: ", persons['persons'])
     res.status(200).end()
   } else {
     res.status(404).end()
