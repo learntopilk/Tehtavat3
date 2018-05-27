@@ -1,1 +1,13 @@
-DELETE http://localhost:3002/api/persons/6
+//DELETE http://localhost:3002/api/persons/6
+
+
+###
+POST http://localhost:3002/api/persons 
+content-type: application/json
+
+{
+    "name" : "Sami Sarkasti",
+    "number": "030-333 0939"
+}
+
+###

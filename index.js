@@ -1,7 +1,9 @@
 //index.js
 const express = require('express')
+const bodyParser = require('body-parser')
 
 const app = express()
+app.use(bodyParser.json())
 
 let persons = {
     "persons": [
@@ -57,6 +59,20 @@ app.get("/api/persons/:id", (req, res) => {
     } else {
         res.send(JSON.stringify(person))
     }
+})
+
+app.post("/api/persons/", (req, res) => {
+  console.log("req.headers: ", req.headers)
+  console.log("req.body: ", req.body)
+  
+  let person = {name: req.body.name, 
+    number: req.body.number,
+    id: Math.floor(Math.random() * 10000)}
+  persons['persons'].push(person)
+  console.log("Persons after update: ", persons['persons'])
+
+  res.json(req.body)
+
 })
 
 app.delete("/api/persons/:id", (req, res) => {
