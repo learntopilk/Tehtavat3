@@ -1,9 +1,11 @@
 //index.js
 const express = require('express')
 const bodyParser = require('body-parser')
+const morgan = require('morgan')
 
 const app = express()
 app.use(bodyParser.json())
+app.use(morgan('tiny'))
 
 const parametersOK = (person) => {
   if (!person.name || !person.number) {
@@ -18,7 +20,7 @@ const parametersOK = (person) => {
 }
 
 const personInList = (person) => {
-  console.log("Checking if the person is already listed")
+  //console.log("Checking if the person is already listed")
   for (let i = 0; i < persons['persons'].length; i++) {
     if (persons['persons'][i].name === person.name) {
       return true
@@ -89,7 +91,7 @@ app.post("/api/persons/", (req, res) => {
   console.log("req.body: ", req.body)
 
   if (parametersOK(req.body)) {
-    console.log("Params OK")
+    //console.log("Params OK")
     if (!personInList(req.body)) {
       console.log("Person not in list")
       let person = {
@@ -124,8 +126,8 @@ app.delete("/api/persons/:id", (req, res) => {
     }
   })
 
-  console.log("found: ", found)
-  console.log("Persons: ", newList)
+  //console.log("found: ", found)
+  //console.log("Persons: ", newList)
 
   if (found) {
     res.status(200).end()
@@ -135,7 +137,7 @@ app.delete("/api/persons/:id", (req, res) => {
 })
 
 app.get("/", (req, res) => {
-  console.log("Request received")
+  //console.log("Request received")
   res.send(JSON.stringify(persons))
 })
 
