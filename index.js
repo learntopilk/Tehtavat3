@@ -145,10 +145,10 @@ app.delete("/api/persons/:id", (req, res) => {
   }
 })
 
-app.get("/", (req, res) => {
+/*app.get("/", (req, res) => {
   //console.log("Request received")
   res.send(JSON.stringify(persons))
-})
+})*/
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
