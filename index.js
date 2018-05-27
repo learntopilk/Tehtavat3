@@ -4,6 +4,8 @@ const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
 
+const PORT = process.env.port || 3002
+
 const app = express()
 
 app.use(cors())
@@ -146,6 +148,8 @@ app.get("/", (req, res) => {
   res.send(JSON.stringify(persons))
 })
 
-app.listen(3002)
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
 
 console.log("Hullo Borld")
