@@ -1,5 +1,5 @@
 //DELETE http://localhost:3002/api/persons/6
-
+GET http://localhost:3002/api/persons
 
 ###
 POST http://localhost:3002/api/persons 
@@ -11,3 +11,37 @@ content-type: application/json
 }
 
 ###
+
+POST http://localhost:3002/api/persons 
+content-type: application/json
+
+{
+    "name" : "Sirkku Sarkasti",
+    "number": "030-333 0939"
+}
+
+###
+
+POST http://localhost:3002/api/persons 
+content-type: application/json
+
+{
+    "name" : "aöshj"
+}
+
+###
+
+
+POST http://localhost:3002/api/persons 
+content-type: application/json
+
+{
+    "name" : "",
+    "number": "2097643"
+}
+
+###
+
+POST http://localhost:3002/api/persons 
+content-type: application/json
+

@@ -5,102 +5,138 @@ const bodyParser = require('body-parser')
 const app = express()
 app.use(bodyParser.json())
 
-let persons = {
-    "persons": [
-      {
-        "name": "Sergei Sarkahousu",
-        "number": "1049348796",
-        "id": 6
-      },
-      {
-        "name": "Martti Särmä",
-        "number": "400-125892",
-        "id": 11
-      },
-      {
-        "name": "Sirkka Hähmä",
-        "number": "090-1231234",
-        "id": 12
-      },
-      {
-        "name": "Seppo Semivaara",
-        "number": "001-kunnonhyvä",
-        "id": 13
-      },
-      {
-        "name": "Sami Sukko",
-        "number": "111-123123",
-        "id": 14
-      },
-      {
-        "name": "Leena Sumppu",
-        "number": "111-234",
-        "id": 15
-      }
-    ]
+const parametersOK = (person) => {
+  if (!person.name || !person.number) {
+    return false
   }
+  if (person.name === '' || person.number === '') {
+    return false
+  }
+  return true
+
+  //return (person.name && person.name !== '' && person.number && person.number !== '')
+}
+
+const personInList = (person) => {
+  console.log("Checking if the person is already listed")
+  for (let i = 0; i < persons['persons'].length; i++) {
+    if (persons['persons'][i].name === person.name) {
+      return true
+    }
+  }
+  return false
+  //return !persons['persons'].some(p => p.name === person.name)
+}
+
+let persons = {
+  "persons": [
+    {
+      "name": "Sergei Sarkahousu",
+      "number": "1049348796",
+      "id": 6
+    },
+    {
+      "name": "Martti Särmä",
+      "number": "400-125892",
+      "id": 11
+    },
+    {
+      "name": "Sirkka Hähmä",
+      "number": "090-1231234",
+      "id": 12
+    },
+    {
+      "name": "Seppo Semivaara",
+      "number": "001-kunnonhyvä",
+      "id": 13
+    },
+    {
+      "name": "Sami Sukko",
+      "number": "111-123123",
+      "id": 14
+    },
+    {
+      "name": "Leena Sumppu",
+      "number": "111-234",
+      "id": 15
+    }
+  ]
+}
 
 app.get("/info", (req, res) => {
-    //res.writeHead(200, {'Content-type': 'text/html'})
-    res.send(`<div>Palvelimella on ${persons['persons'].length} yhteystietoa.</div><div>${new Date()}</div>`)
+  //res.writeHead(200, {'Content-type': 'text/html'})
+  res.send(`<div>Palvelimella on ${persons['persons'].length} yhteystietoa.</div><div>${new Date()}</div>`)
 })
 
 app.get("/api/persons", (req, res) => {
-    res.writeHead(200, { 'Content-Type': 'application/json' , 'Access-Control-Allow-Origin': 'true'})
-    res.end(JSON.stringify(persons))
+  res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'true' })
+  res.end(JSON.stringify(persons))
 })
 
 app.get("/api/persons/:id", (req, res) => {
-    console.log("333")
-    let person = persons['persons'].find(person => person.id === Number(req.params.id))
 
-    if (!person) {
-        res.status(404).end()
-    } else {
-        res.send(JSON.stringify(person))
-    }
+  let person = persons['persons'].find(person => person.id === Number(req.params.id))
+
+  if (!person) {
+    res.status(404).end()
+  } else {
+    res.send(JSON.stringify(person))
+  }
 })
 
 app.post("/api/persons/", (req, res) => {
-  console.log("req.headers: ", req.headers)
-  console.log("req.body: ", req.body)
   
-  let person = {name: req.body.name, 
-    number: req.body.number,
-    id: Math.floor(Math.random() * 10000)}
-  persons['persons'].push(person)
-  console.log("Persons after update: ", persons['persons'])
+  console.log("req.body: ", req.body)
 
-  res.json(req.body)
+  if (parametersOK(req.body)) {
+    console.log("Params OK")
+    if (!personInList(req.body)) {
+      console.log("Person not in list")
+      let person = {
+        name: req.body.name,
+        number: req.body.number,
+        id: Math.floor(Math.random() * 10000)
+      }
+      persons['persons'].push(person)
+      console.log("Persons after update: ", persons['persons'])
+
+      res.json(req.body).end()
+    } else {
+      res.status(400).json({'error': 'Person already in list!'})
+    }
+  } else {
+    res.status(400).json({'error': 'One or more parameters are not valid or do not exist.'})
+  }
+
 
 })
 
 app.delete("/api/persons/:id", (req, res) => {
-    let found = false;
-    let newList = []
-     persons['persons'].map(person => {
-       if (person.id !== Number(req.params.id)) {
-        newList.push(person) 
-        return true
-       } else {
-         found = true
-         return false
-       }
-    })
-
-    console.log("found: ", found)
-    console.log("Persons: ", newList)
-
-    if (found) {
-      res.status(200).end()
+  let found = false;
+  let newList = []
+  persons['persons'].map(person => {
+    if (person.id !== Number(req.params.id)) {
+      newList.push(person)
+      return true
     } else {
-      res.status(404).end()
+      found = true
+      return false
     }
+  })
+
+  console.log("found: ", found)
+  console.log("Persons: ", newList)
+
+  if (found) {
+    res.status(200).end()
+  } else {
+    res.status(404).end()
+  }
 })
 
 app.get("/", (req, res) => {
-    console.log("Request received")
-    res.send(JSON.stringify(persons))
+  console.log("Request received")
+  res.send(JSON.stringify(persons))
 })
 
 app.listen(3002)
