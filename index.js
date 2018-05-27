@@ -44,8 +44,19 @@ app.get("/info", (req, res) => {
 })
 
 app.get("/api/persons", (req, res) => {
-    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.writeHead(200, { 'Content-Type': 'application/json' , 'Access-Control-Allow-Origin': 'true'})
     res.end(JSON.stringify(persons))
+})
+
+app.get("/api/persons/:id", (req, res) => {
+    console.log("333")
+    let person = persons['persons'].find(person => person.id === Number(req.params.id))
+
+    if (!person) {
+        res.status(404).end()
+    } else {
+        res.send(JSON.stringify(person))
+    }
 })
 
 app.get("/", (req, res) => {
