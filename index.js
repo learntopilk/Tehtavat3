@@ -24,7 +24,7 @@ const parametersOK = (person) => {
   if (person.name === '' || person.number === '') {
     return false
   }
-  return true 
+  return true
 
   //return (person.name && person.name !== '' && person.number && person.number !== '')
 }

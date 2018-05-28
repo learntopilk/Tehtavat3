@@ -1,2 +1,3 @@
 /delete_contact.rest
 /node_modules
+.env
