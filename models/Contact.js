@@ -2,21 +2,22 @@ const mongoose = require('mongoose')
 const dbInfo = require('dotenv').config()
 
 
-let user = ""
-let pwd = ""
-let dbUrl = ""
+//let user = ""
+//let pwd = ""
+//let dbUrl = ""
 
-console.log(process.env.NODE_ENV)
-if (process.env.NODE_ENV !== "PROD"){
-    user = process.env.DEV_DBUSER
-    pwd = process.env.DEV_DBPWD
-    dbUrl = `mongodb://${user}:${pwd}@ds137600.mlab.com:37600/fullstack-dev`
-    
+console.log("Env: ", process.env.NODE_ENV)
+if (process.env.NODE_ENV !== "production"){
+    require('dotenv').config()
+    //user = process.env.DBUSER
+    //pwd = process.env.DBPWD
+    //dbUrl = `mongodb://${user}:${pwd}@ds237610.mlab.com:37610/fullstack`
 } else {
-    user = process.env.DBUSER
-    pwd = process.env.DBPWD
-    dbUrl = `mongodb://${user}:${pwd}@ds137600.mlab.com:37600/fullstack-dev`
+    //user = process.env.DEV_DBUSER
+    //pwd = process.env.DEV_DBPWD
+    //dbUrl = `mongodb://${user}:${pwd}@ds137600.mlab.com:37600/fullstack-dev`
 }
+const dbUrl = process.env.MONGODB_URI
 
 console.log(dbUrl)
 
