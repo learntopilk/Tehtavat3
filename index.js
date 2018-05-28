@@ -3,17 +3,15 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
+const Contact = require('./models/Contact')
 
 const PORT = process.env.PORT || 3002
-
 const app = express()
 
 app.use(cors())
-morgan.token('body', (req) => {return JSON.stringify(req.body)})
+morgan.token('body', (req) => { return JSON.stringify(req.body) })
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time: ms'))
-
 app.use(express.static('build'))
-
 app.use(bodyParser.json())
 
 
@@ -25,103 +23,72 @@ const parametersOK = (person) => {
     return false
   }
   return true
-
-  //return (person.name && person.name !== '' && person.number && person.number !== '')
 }
 
-const personInList = (person) => {
-  //console.log("Checking if the person is already listed")
-  for (let i = 0; i < persons['persons'].length; i++) {
-    if (persons['persons'][i].name === person.name) {
-      return true
-    }
-  }
-  return false
-  //return !persons['persons'].some(p => p.name === person.name)
-}
-
-let persons = {
-  "persons": [
-    {
-      "name": "Sergei Sarkahousu",
-      "number": "1049348796",
-      "id": 6
-    },
-    {
-      "name": "Martti Särmä",
-      "number": "400-125892",
-      "id": 11
-    },
-    {
-      "name": "Sirkka Hähmä",
-      "number": "090-1231234",
-      "id": 12
-    },
-    {
-      "name": "Seppo Semivaara",
-      "number": "001-kunnonhyvä",
-      "id": 13
-    },
-    {
-      "name": "Sami Sukko",
-      "number": "111-123123",
-      "id": 14
-    },
-    {
-      "name": "Leena Sumppu",
-      "number": "111-234",
-      "id": 15
-    }
-  ]
-}
 
 app.get("/info", (req, res) => {
-  //res.writeHead(200, {'Content-type': 'text/html'})
-  res.send(`<div>Palvelimella on ${persons['persons'].length} yhteystietoa.</div><div>${new Date()}</div>`)
+  Contact
+   .find()
+   .then(res = res.send(`<div>palvelimella on ${res.length} yhteystietoa.</div>`))
+  //res.send(`<div>Palvelimella on ${persons['persons'].length} yhteystietoa.</div><div>${new Date()}</div>`)
 })
 
 app.get("/api/persons", (req, res) => {
-  res.writeHead(200, { 'Content-Type': 'application/json' })
-  res.end(JSON.stringify(persons['persons']))
+  Contact
+    .find({})
+    .then(persons => {
+      let p = persons.map(person => Contact.format(person))
+      console.log("p: ", p)
+      res.json(p)
+    })
+
 })
 
 app.get("/api/persons/:id", (req, res) => {
 
-  let person = persons['persons'].find(person => person.id === Number(req.params.id))
+  console.log(req.params.id)
 
-  if (!person) {
-    res.status(404).end()
-  } else {
-    res.send(JSON.stringify(person))
-  }
+  Contact
+    .find({ _id: req.params.id })
+    .then(pers => {
+      console.log(pers[0])
+      res.status(200).json(Contact.format(pers[0]))
+    })
 })
 
 app.post("/api/persons/", (req, res) => {
-  
-  //console.log("req.body: ", req.body)
 
-  if (parametersOK(req.body)) {
-    //console.log("Params OK")
-    if (!personInList(req.body)) {
-      //console.log("Person not in list")
-      let person = {
-        name: req.body.name,
-        number: req.body.number,
-        id: Math.floor(Math.random() * 10000)
-      }
-      persons['persons'].push(person)
-     // console.log("Persons after update: ", persons['persons'])
+  const body = req.body
+  console.log(body)
 
-      res.json(person).end()
-    } else {
-      res.status(400).json({'error': 'Person already in list!'})
-    }
+  if (parametersOK(body)) {
+
+    Contact
+      .find({ name: body.name })
+      .then(result => {
+        console.log("result: ", result)
+        if (result.length !== 0) {
+          return res.status(400).json({ error: "Contact already in database!" })
+        } else {
+
+          const contact = new Contact({
+            name: body.name,
+            number: body.number,
+          })
+
+          contact
+            .save()
+            .then(result => {
+              console.log(result)
+              res.status(200).json(Contact.format(result))
+            })
+        }
+      })
   } else {
-    res.status(400).json({'error': 'One or more parameters are not valid or do not exist.'})
+    res.status(400).json({ 'error': 'Invalid parameters' })
   }
-
-
 })
+
 
 app.delete("/api/persons/:id", (req, res) => {
   let found = false;
@@ -145,10 +112,6 @@ app.delete("/api/persons/:id", (req, res) => {
   }
 })
 
-/*app.get("/", (req, res) => {
-  //console.log("Request received")
-  res.send(JSON.stringify(persons))
-})*/
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)

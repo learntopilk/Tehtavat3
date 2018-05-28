@@ -5,7 +5,6 @@ const user = process.env.DBUSER
 const pwd = process.env.DBPWD
 
 const dbUrl = `mongodb://${user}:${pwd}@ds237610.mlab.com:37610/fullstack`
-console.log(dbUrl)
 
 mongoose.connect(dbUrl)
 const contactSchema = new mongoose.Schema({
