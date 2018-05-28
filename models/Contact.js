@@ -13,6 +13,7 @@ const contactSchema = new mongoose.Schema({
   name: String,
   number: String
 })
+
 contactSchema.statics.format = function (c) {
   return { name: c.name, number: c.number, id: c._id }
 }
