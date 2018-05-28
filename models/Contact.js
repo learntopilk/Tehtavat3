@@ -1,10 +1,24 @@
 const mongoose = require('mongoose')
 const dbInfo = require('dotenv').config()
 
-const user = process.env.DBUSER
-const pwd = process.env.DBPWD
 
-const dbUrl = `mongodb://${user}:${pwd}@ds237610.mlab.com:37610/fullstack`
+let user = ""
+let pwd = ""
+let dbUrl = ""
+
+console.log(process.env.NODE_ENV)
+if (process.env.NODE_ENV !== "PROD"){
+    user = process.env.DEV_DBUSER
+    pwd = process.env.DEV_DBPWD
+    dbUrl = `mongodb://${user}:${pwd}@ds137600.mlab.com:37600/fullstack-dev`
+    
+} else {
+    user = process.env.DBUSER
+    pwd = process.env.DBPWD
+    dbUrl = `mongodb://${user}:${pwd}@ds137600.mlab.com:37600/fullstack-dev`
+}
+
+console.log(dbUrl)
 
 mongoose.connect(dbUrl)
 const contactSchema = new mongoose.Schema({
